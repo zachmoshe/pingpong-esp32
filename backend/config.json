@@ -1,0 +1,17 @@
+{
+    "server": { 
+        "ip": "0.0.0.0",
+        "port": 12345,
+        "use_ngrok": true
+    },
+    "controller": {
+        "time_without_event_to_declare_idle_secs": 10
+    },
+    "notifier": { 
+        "token": "${SLACK_BOT_TOKEN}",
+        "channel": "deci-pingpong",
+        "assets_url": "http://deci-pingpong.nvidia.com:12345/assets"
+    },
+    "_comment": "IL-MTVR-Pingpong20F@nvidia.com"
+
+}
