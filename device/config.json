@@ -1,14 +1,21 @@
 {
+  "general": {
+    "server_url": "http://192.168.1.103:12345"
+  },
   "detector": { 
     "sample_rate": 16000,
-    "samples_per_frame": 512
+    "window_size_ms": 40,
+    "rolling_max_short_decay_factor": 0.750,
+    "rolling_max_long_decay_factor": 0.95,
+    "bounce_threshold": 5,
+    "highpass_filter_cutoff_freq": 7500,
+    "debug": false,
+    "debug_audio_samples_endpoint": "/audio-samples"
+  },
+  "indicator": { 
   },
   "notifier": {
-    "led": { 
-      "pin": 2
-    },
-    "http": { 
-      "server_url": "http://192.168.1.101:12345"
-    }
+    "pingpong_event_endpoint": "/pingpong-event",
+    "ping_endpoint": "/ping"
   }
 }

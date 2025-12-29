@@ -14,11 +14,12 @@ COLOR_WHITE = (255, 255, 255)
 
 _BLINK_DURATION_MS = 128
 
+_LED_GPIO_PIN = 2
 
 class DeviceIndicator:
     def __init__(self, cfg):
         # Init LED notification
-        self.led = neopixel.NeoPixel(machine.Pin(cfg["led"]["pin"]), 1, bpp=3)
+        self.led = neopixel.NeoPixel(machine.Pin(_LED_GPIO_PIN), 1, bpp=3)
         self.led.fill((0, 0, 0))
         self.led.write()
 
@@ -37,5 +38,6 @@ class DeviceIndicator:
     async def info(self):
         await self.blink(COLOR_BLUE, 1)
 
-    
+    async def pingpong_bounce(self):
+        await self.blink(COLOR_GREEN, 1)
 
