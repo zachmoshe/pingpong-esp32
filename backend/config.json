@@ -5,7 +5,7 @@
         "use_ngrok": true
     },
     "controller": {
-        "time_without_event_to_declare_idle_secs": 10
+        "time_without_event_to_declare_idle_secs": 600
     },
     "notifier": { 
         "token": "${SLACK_BOT_TOKEN}",
