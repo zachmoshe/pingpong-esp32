@@ -9,9 +9,10 @@ repl:
 	uv run mpremote connect $(PORT) repl
 
 sync:
-	uv run mpremote connect $(PORT) fs mkdir :/lib || true
-	uv run mpremote connect $(PORT) fs cp -r device/* :     
-	@echo 'Remember to create device/secrets.json (see secrets.example.json)'
+	uv run mpremote connect $(PORT) sleep 1 fs cp -r device/* :            
+
+run-backend:
+	uv run python backend/server.py
 
 run: sync reset
 
