@@ -37,6 +37,8 @@ async def lifespan(app: FastAPI):
     await app.state.notifier.init()
     app.state.controller = Controller(app.state.cfg["controller"], app.state.notifier)
     yield
+    await app.state.ngrok_listener.close()
+    await app.state.ngrok_session.close()
 
 
 async def expose_server_with_ngrok(port):
@@ -144,8 +146,8 @@ def build_app(cfg):
 
     return app
 
+
 cfg = load_config("backend/config.json")
-# _use_ngrok_if_needed(cfg)
 app = build_app(cfg)
 
 if __name__ == "__main__":

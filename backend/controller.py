@@ -1,7 +1,11 @@
 import asyncio
 from contextlib import asynccontextmanager
 import enum
+import logging 
 import time
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class RoomState:
@@ -59,9 +63,11 @@ class Controller:
 
     async def _countdown_to_free_room(self):
         await asyncio.sleep(self.time_without_event_to_declare_idle_secs)
+        logger.info(f"Countdown to free room completed. Freeing room.")
         await self.room_state.free()
 
     async def handle_room_taken_indication(self, event):
+        logger.info(f"Room taken indication received: {event}")
         await self.room_state.take()
         self.start_countdown_to_free_room()
 
