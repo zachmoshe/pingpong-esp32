@@ -45,9 +45,9 @@ class Controller:
     async def handle_event(self, event):
         event_type = event.get("type")
         if event_type is None:
-            raise ValueError("Illegal event. No `event_type`")
+            raise ValueError("Illegal event. No `type`")
 
-        if event_type == "room-taken-indication":
+        if event_type == "bounce-detected":
             await self.handle_room_taken_indication(event)
         else: 
             raise ValueError(f"Unknown event type: {event_type}")

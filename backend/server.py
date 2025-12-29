@@ -3,11 +3,12 @@ from contextlib import asynccontextmanager
 import logging
 import os  
 import pathlib
+from typing import List
 from urllib.parse import urlparse, urlunparse
 
 
 import dotenv
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 import ngrok
@@ -68,6 +69,9 @@ async def _use_ngrok_if_needed(cfg):
 def build_app(cfg)  :
     app = FastAPI(lifespan=lifespan)
     app.state.cfg = cfg
+    
+    # WebSocket connections for microphone test streaming
+    active_ws_connections: List[WebSocket] = []
 
     @app.get("/ping")
     async def ping():
@@ -92,6 +96,49 @@ def build_app(cfg)  :
     @app.get("/room-state")
     async def room_state():
         return JSONResponse(content=app.state.controller.get_room_state())
+
+    @app.websocket("/ws/audio-stream")
+    async def audio_stream_ws(websocket: WebSocket):
+        """WebSocket endpoint for streaming audio data to web clients"""
+        await websocket.accept()
+        active_ws_connections.append(websocket)
+        logger.info(f"WebSocket client connected. Active connections: {len(active_ws_connections)}")
+        try:
+            # Keep connection alive and wait for messages (or disconnection)
+            while True:
+                await websocket.receive_text()
+        except WebSocketDisconnect:
+            active_ws_connections.remove(websocket)
+            logger.info(f"WebSocket client disconnected. Active connections: {len(active_ws_connections)}")
+    
+    @app.post("/audio-samples")
+    async def receive_audio_samples(request: Request):
+        """Receive audio samples from ESP32 device and broadcast to WebSocket clients"""
+        try:
+            data = await request.json()
+        except Exception:
+            logger.error("Invalid JSON in audio samples: %s", await request.body())
+            return JSONResponse(status_code=400, content={"error": "Invalid JSON"})
+        
+        if "samples" not in data:
+            return JSONResponse(status_code=400, content={"error": "Missing 'samples' field"})
+        
+        # Broadcast to all connected WebSocket clients
+        if active_ws_connections:
+            disconnected = []
+            for connection in active_ws_connections:
+                try:
+                    await connection.send_json(data)
+                except Exception as e:
+                    logger.warning(f"Failed to send to WebSocket client: {e}")
+                    disconnected.append(connection)
+            
+            # Remove disconnected clients
+            for conn in disconnected:
+                if conn in active_ws_connections:
+                    active_ws_connections.remove(conn)
+        
+        return JSONResponse(content={"status": "ok", "clients": len(active_ws_connections)})
 
     app.mount("/assets", StaticFiles(directory=_ASSETS_FOLDER), name="assets")
 
