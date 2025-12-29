@@ -59,3 +59,10 @@ pingpong-esp32/
 - `device/secrets.json` is **.gitignored** and can be pushed over serial any time.
 - If multiple serial ports are present, set `PORT=/dev/tty.usbserial-...` explicitly.
 - Use `Ctrl-D` to soft‑reboot from REPL; `Ctrl-]` to exit `mpremote`.
+
+## Backend: Docker deploy (Linux VM)
+- Copy `env.example` to `.env` and fill `SLACK_BOT_TOKEN` (and `NGROK_AUTH_TOKEN` if you keep ngrok on in `backend/config.json`).
+- Build and start: `docker compose up -d --build`.
+- Update to a new version: pull/code sync, then `docker compose up -d --build` again.
+- Host port is configurable via `BACKEND_PORT` in `.env` (container always listens on 12345).
+- To view logs: `docker compose logs -f backend`.
