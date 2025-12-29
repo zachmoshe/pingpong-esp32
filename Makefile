@@ -12,7 +12,7 @@ sync:
 	uv run mpremote connect $(PORT) sleep 1 fs cp -r device/* :            
 
 run-backend:
-	uv run python backend/server.py
+	docker build -t backend-server . && docker run -it --rm -p ${BACKEND_PORT}:12345 -v $(PWD)/.env:/app/.env backend-server
 
 run: sync reset
 

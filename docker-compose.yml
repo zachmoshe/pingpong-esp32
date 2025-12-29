@@ -1,5 +1,5 @@
 services:
-  backend:
+ pingpong-backend:
     build:
       context: .
       dockerfile: Dockerfile
