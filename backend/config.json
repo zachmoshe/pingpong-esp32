@@ -9,8 +9,8 @@
     },
     "notifier": { 
         "token": "${SLACK_BOT_TOKEN}",
-        "channel": "deci-pingpong",
-        "assets_url": "http://deci-pingpong.nvidia.com:12345/assets"
+        "channel": "${SLACK_CHANNEL}",
+        "assets_url": "${EXTERNAL_SERVER_URL}/assets"
     },
     "_comment": "IL-MTVR-Pingpong20F@nvidia.com"
 

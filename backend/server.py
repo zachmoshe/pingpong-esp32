@@ -66,7 +66,7 @@ async def _use_ngrok_if_needed(cfg):
     cfg["notifier"]["assets_url"] = new_assets_url
 
 
-def build_app(cfg)  :
+def build_app(cfg):
     app = FastAPI(lifespan=lifespan)
     app.state.cfg = cfg
     
@@ -150,6 +150,16 @@ app = build_app(cfg)
 
 if __name__ == "__main__":
     try: 
-        uvicorn.run("server:app", host=cfg["server"]["ip"], port=cfg["server"]["port"], log_level="debug", reload=True)
+        reload = os.getenv("RELOAD", "").strip().lower() in ("1", "true", "yes")
+        uvicorn.run(
+            "server:app",
+            host=cfg["server"]["ip"],
+            port=cfg["server"]["port"],
+            log_level="debug",
+            reload=reload,
+        )
     finally:
-        ngrok.disconnect()
+        try:
+            ngrok.disconnect()
+        except Exception:
+            pass

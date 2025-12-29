@@ -1,6 +1,6 @@
 # pingpong-esp32 (MicroPython on ESP32)
 
-A clean starter for developing an ESP32 project with **MicroPython** on macOS.
+A MicroPython (ESP32) + FastAPI backend project.
 
 ## Quick start
 
@@ -23,6 +23,9 @@ $EDITOR device/secrets.json
 # 5) Sync code and run
 make run   # (sync + reset)
 make repl  # open a REPL
+
+# Optional: run backend locally
+make run-backend
 ```
 
 ## Layout
@@ -49,10 +52,12 @@ pingpong-esp32/
 │  │  ├─ wifi_manager.py
 │  │  └─ ntp.py
 │  └─ secrets.example.json
-├─ host/
-│  └─ cli.py            (placeholder for future Slack/diagnostics)
+├─ backend/
+│  ├─ server.py         (FastAPI app)
+│  ├─ config.json       (expanded from env vars)
+│  └─ assets/
 └─ docs/
-   └─ wiring.md
+   └─ secrets.template.json
 ```
 
 ## Notes
@@ -61,7 +66,7 @@ pingpong-esp32/
 - Use `Ctrl-D` to soft‑reboot from REPL; `Ctrl-]` to exit `mpremote`.
 
 ## Backend: Docker deploy (Linux VM)
-- Copy `env.example` to `.env` and fill `SLACK_BOT_TOKEN` (and `NGROK_AUTH_TOKEN` if you keep ngrok on in `backend/config.json`).
+- Copy `env.example` to `.env` and fill `SLACK_BOT_TOKEN` (and `NGROK_AUTH_TOKEN` if you enable ngrok in `backend/config.json`).
 - Build and start: `docker compose up -d --build`.
 - Update to a new version: pull/code sync, then `docker compose up -d --build` again.
 - Host port is configurable via `BACKEND_PORT` in `.env` (container always listens on 12345).
